@@ -1,8 +1,10 @@
-import scrapy
-import requests
 import json
 from datetime import date, timedelta, datetime
 import pandas as pd
+
+import scrapy
+import requests
+from fuzzywuzzy import process
 
 def item_json(url):
     '''Gets the item data from the JSON of an item page.
@@ -53,11 +55,15 @@ def seller_list(buyer_page_url, previous_days):
             item_images = buyer_table.xpath('..//img/@src').extract()
             # Get item_names
             item_names = buyer_table.xpath('..//img/@alt').extract()
+            
+            sold_info_xp = '..//li[@class="buyeritemtable_info"]'
             # Get sold amounts
-            sold_amounts_unformatted = buyer_table.xpath('..//li[@class="buyeritemtable_info"]/p[2]/text()').extract()
+            sold_amounts_unformatted = [buyer_table.xpath(sold_info_xp)[i].xpath('..//p/text()').extract()[-2] 
+                                        for i in range(len(item_names))]
             sold_amounts = [int(i.split('：')[1].split('個')[0]) for i in sold_amounts_unformatted]
             # Get sold dates
-            sold_dates_unformatted = buyer_table.xpath('..//li[@class="buyeritemtable_info"]/p[3]/text()').extract()
+            sold_dates_unformatted = [buyer_table.xpath(sold_info_xp)[i].xpath('..//p/text()').extract()[-1] 
+                                      for i in range(len(item_names))]
             sold_dates = [datetime.strptime(i.split('：')[1], '%Y/%m/%d')  for i in sold_dates_unformatted]
 
             keys = ['url_ext', 'img', 'item_name','sold_amount', 'sold_date']
@@ -125,5 +131,5 @@ def all_listed_items_details(buyer_page_url, previous_days):
 
 #item_json('https://www.buyma.com/item/53799545/')
 
-
+#good example:  https://www.buyma.com/buyer/3556134/sales_1.html
 
