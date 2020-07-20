@@ -94,6 +94,7 @@ def seller_list(buyer_page_url, previous_days):
 
 #seller_list('https://www.buyma.com/buyer/4880785/sales_1.html', 60)
 
+
 def all_listed_items_details(buyer_page_url, previous_days):
     '''Gets the base data for items listed on a page.
     A date threshold can be set which will tell the scraper to stop going through
@@ -118,6 +119,78 @@ def all_listed_items_details(buyer_page_url, previous_days):
         items.append(all_item_data)
     
     return items
+
+
+def fuzzy_extract(target_item_name, list_of_item_names, minimum_score=90):
+    '''
+    Parameters
+    ----------
+    target_item_name: string
+        Item name.
+    list_of_item_names : list
+        List of strings.
+    minimum_score : Int
+        Set the minimum fuzzy score value, default set to 90.
+        100 = exact match
+        0 =  not matching at all
+
+    Returns
+    -------
+    List
+        List of tuples containing the matching item name and the fuzzy score
+        if it is equal to or above the minimum score.
+        
+        Example
+        [("THE NORTH FACE M'S TECH NUPTSE S S R TEE YU212", 100),
+         ("THE NORTH FACE M'S TECH NUPTSE S S R TEE YU212", 100),
+         ("THE NORTH FACE M'S TECH NUPTSE S S R TEE YU212", 100),
+         ('THE NORTH FACE NUPTSE S/S R/TEE YU211', 87),
+         ('THE NORTH FACE NUPTSE S/S R/TEE YU211', 87)]
+        
+    '''
+    close_matches = []
+    
+    init_scores = process.extract(target_item_name, list_of_item_names)
+    for i in init_scores:
+        if i[1] >= minimum_score:
+            close_matches.append(i)
+    
+    return close_matches
+
+
+def similar_items(listed_items, minimum_score=90):
+    '''Fuzzy string matching will be applied to all item_names in a list of items.
+    If another item has a match of 90-100, the url_extension will be noted,
+    And the sold amount will be aggregrated.
+
+
+    Parameters
+    ----------
+    listed_items : List
+        List of dictionaries containing:
+            'url_ext', 'img', 'item_name', 'sold_amount', 'sold_date'
+
+    Returns
+    -------
+    List
+        List of dictionaries containing:
+            'url_ext', 'img', 'item_name', 'sold_amount', 'sold_date'
+            'similar_url_ext', 'sold_amount_agg'
+    '''
+    
+#    listed_items
+#    
+#    for i in range(len(list_of_item_names)):
+#        # Separate target item from other items
+#        others = [list_of_item_names[x] for x in range(len(list_of_item_names)) if x != i]
+#        init_scores = process.extract(list_of_item_names[i], others)    
+    
+        
+    
+    
+    return
+    
+
 
 #buyer_page_data = seller_list('https://www.buyma.com/buyer/4880785/sales_1.html', 60)
 
