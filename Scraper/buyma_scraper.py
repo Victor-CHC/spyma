@@ -6,6 +6,38 @@ import scrapy
 import requests
 from fuzzywuzzy import process
 
+def item_name_cleaner(item_name):
+    '''
+    Parameters
+    ----------
+    item_name : string
+        Raw item name as displayed on Buyma
+
+    Returns
+    -------
+    string
+        Item name without the junk words
+
+    '''
+    junk_words = [
+    '人気', '大人気', '超人気', '人気商品',
+    '人気アイテム', 'コラボ', 'レア', '激レア', '特価',
+    '最終', 'セール', '定番', '追加料金',
+    '送料無料', '送込', '送料込', '送料込み','国内発送',
+    '国内発', '国内即発', '国内在庫', '即発',
+    '即納', '最新作', '新作', '入手困難', '関税込', '関税', 
+    '関税無料', '無料', '兼用', '日本未発売', '日本未入荷', '海外限定',
+    '期間限定', '限定', '完売', '日本完売', '在庫確認', 
+    '別注', '追跡', '追跡付', '追跡あり', '追跡有り', 'カラバリ', '直営', 
+    '送料込', '送料', 
+    '☆','★','♦','・','!','!!','【','】','（','）','(',')','：',':'
+    ]
+    
+    for w in junk_words:
+        item_name = item_name.replace(w,'')
+    
+    return item_name
+
 def item_json(url):
     '''Gets the item data from the JSON of an item page.
     INPUT: Item page URL
@@ -55,6 +87,7 @@ def seller_list(buyer_page_url, previous_days):
             item_images = buyer_table.xpath('..//img/@src').extract()
             # Get item_names
             item_names = buyer_table.xpath('..//img/@alt').extract()
+            item_names_cleaned = [item_name_cleaner(i) for i in item_names]
             
             sold_info_xp = '..//li[@class="buyeritemtable_info"]'
             # Get sold amounts
@@ -66,12 +99,13 @@ def seller_list(buyer_page_url, previous_days):
                                       for i in range(len(item_names))]
             sold_dates = [datetime.strptime(i.split('：')[1], '%Y/%m/%d')  for i in sold_dates_unformatted]
 
-            keys = ['url_ext', 'img', 'item_name','sold_amount', 'sold_date']
+            keys = ['url_ext', 'img', 'item_name','item_name_clean','sold_amount', 'sold_date']
 
             # Combine to a dictionary
             items_dict+= [dict(zip(keys,[item_url_extensions[i],
                               item_images[i],
                               item_names[i],
+                              item_names_cleaned[i],
                               sold_amounts[i],
                               sold_dates[i]])) 
                           for i in range(len(item_url_extensions))]
@@ -93,6 +127,7 @@ def seller_list(buyer_page_url, previous_days):
     return items_dict
 
 #seller_list('https://www.buyma.com/buyer/4880785/sales_1.html', 60)
+
 
 
 def all_listed_items_details(buyer_page_url, previous_days):
@@ -159,36 +194,52 @@ def fuzzy_extract(target_item_name, list_of_item_names, minimum_score=90):
 
 
 def similar_items(listed_items, minimum_score=90):
-    '''Fuzzy string matching will be applied to all item_names in a list of items.
+    '''Fuzzy string matching will be applied to all CLEAN item names in a list of items.
     If another item has a match of 90-100, the url_extension will be noted,
     And the sold amount will be aggregrated.
-
 
     Parameters
     ----------
     listed_items : List
         List of dictionaries containing:
-            'url_ext', 'img', 'item_name', 'sold_amount', 'sold_date'
+            'url_ext', 'img', 'item_name', 'item_name_clean', 'sold_amount', 'sold_date'
 
     Returns
     -------
     List
         List of dictionaries containing:
-            'url_ext', 'img', 'item_name', 'sold_amount', 'sold_date'
+            'url_ext', 'img', 'item_name',  'item_name_clean', 
+            'sold_amount', 'sold_date', 
             'similar_url_ext', 'sold_amount_agg'
     '''
     
-#    listed_items
-#    
-#    for i in range(len(list_of_item_names)):
-#        # Separate target item from other items
-#        others = [list_of_item_names[x] for x in range(len(list_of_item_names)) if x != i]
-#        init_scores = process.extract(list_of_item_names[i], others)    
+    updated_listed_items = listed_items
     
+    for i in range(len(listed_items)):
+        # Distinguish between target item and other items
+        target_item = listed_items[i].get('item_name_clean')
         
-    
-    
-    return
+        if i == 0:
+            other_items = [li for li in listed_items[1:]]
+        elif i == len(listed_items):
+            other_items = [li for li in listed_items[:-1]]
+        else:
+            other_items = [li for li in listed_items[i+1:]] + [li for li in listed_items[:i]]
+        
+        similar_url_ext = []
+        sold_amount_agg = listed_items[i].get('sold_amount')
+        # Get Fuzzy Scores for all other items
+        for other_item in other_items:
+            fuzzy_score = fuzzy_extract(target_item, [other_item.get('item_name_clean')], minimum_score)
+            # add the url extension and sold amount aggregate to 
+            # target item dictionary if it is a close match
+            if fuzzy_score != []:
+                similar_url_ext.append(other_item.get('url_ext'))
+                sold_amount_agg += other_item.get('sold_amount')
+            updated_listed_items[i]['similar_url_ext'] = similar_url_ext
+            updated_listed_items[i]['sold_amount_agg'] = sold_amount_agg
+        
+    return updated_listed_items
     
 
 
