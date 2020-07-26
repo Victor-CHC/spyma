@@ -29,7 +29,8 @@ def item_name_cleaner(item_name):
     '関税無料', '無料', '兼用', '日本未発売', '日本未入荷', '海外限定',
     '期間限定', '限定', '完売', '日本完売', '在庫確認', 
     '別注', '追跡', '追跡付', '追跡あり', '追跡有り', 'カラバリ', '直営', 
-    '送料込', '送料', 
+    '送料込', '送料', '最新', '正規保証', '国内',
+    '◆', '〓', '》', '《',
     '☆','★','♦','・','!','!!','【','】','（','）','(',')','：',':'
     ]
     
@@ -242,7 +243,7 @@ def similar_items(listed_items, minimum_score=90):
     return updated_listed_items
     
 
-def extra_search(item_name):
+def extra_search(search_item_name):
     '''
     Parameters
     ----------
@@ -255,12 +256,10 @@ def extra_search(item_name):
     '''
     
     # Format the item name into a Buyma search URL string
-    item_name_formatted = item_name.replace(' ','%20')
+    item_name_formatted = search_item_name.replace(' ','%20')
     url = 'https://www.buyma.com/r/-F1/{}'.format(item_name_formatted)
     
     response = scrapy.Selector(text=requests.get(url, timeout=10).text)
-    
-    item_blocks = response.xpath('//div[@id="n_ResultList"]/ul/li')
     
     # Item info
     prices = response.xpath('//div[@id="n_ResultList"]/ul/li/div[1]/div[1]/a/@price').extract()
@@ -292,6 +291,71 @@ def extra_search(item_name):
 
     return items_dict
 
+
+def extra_search_similar_items(search_item_name, listed_items, minimum_score=90):
+    '''Fuzzy string matching will be applied to all results from an extra_search
+    and matched against a search_item_name.
+    
+    Matches that are within the fuzzy minimum score threshold will be returned
+
+    Parameters
+    ----------
+    listed_items : List
+        List of dictionaries containing:
+            'price', 'item_id', 'brand', 'item_name', 'item_name_clean', 'image', 'buyer_name', 'buyer_id'
+
+    Returns
+    -------
+    List
+        List of dictionaries containing:
+            'price', 'item_id', 'brand', 'item_name', 'item_name_clean', 'image', 'buyer_name', 'buyer_id'
+    '''
+    
+    # Get all of the CLEAN names
+    all_clean_names = [i['item_name_clean'] for i in listed_items]
+    search_item_name_clean = item_name_cleaner(search_item_name)
+    
+    # Filter and keep only the scores that are at least the minimum score
+    good_matches = []
+    
+    for i in range(len(listed_items)):
+        # Run a fuzzy match against the cleaned search item name
+        fuzzy_score = process.extract(search_item_name_clean, [all_clean_names[i]])[0][-1]
+        if fuzzy_score >= minimum_score:
+            similarity_score = {'similarity_score':fuzzy_score}
+            good_matches.append({**listed_items[i],**similarity_score})
+        
+    return good_matches
+
+def similar_extra_search(search_item_name, minimum_score=85):
+    '''Search query with fuzzy string matching applied to all results 
+    matched against a search_item_name.
+    
+    Matches that are within the fuzzy minimum score threshold will be returned
+
+    Parameters
+    ----------
+    search_item_name : string
+        Search Item Query
+
+    minimum_score : integer
+        Minimum fuzzy score
+
+    Returns
+    -------
+    List
+        List of dictionaries containing:
+            'price', 'item_id', 'brand', 'item_name', 'item_name_clean', 'image', 'buyer_name', 'buyer_id', 'similarity_score'
+    '''
+    
+    search = extra_search(search_item_name)
+    similar_items = extra_search_similar_items(search_item_name, search, minimum_score)
+    
+    return similar_items
+    
+    
+    
+    
 
 #buyer_page_data = seller_list('https://www.buyma.com/buyer/4880785/sales_1.html', 60)
 
