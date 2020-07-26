@@ -242,6 +242,56 @@ def similar_items(listed_items, minimum_score=90):
     return updated_listed_items
     
 
+def extra_search(item_name):
+    '''
+    Parameters
+    ----------
+    item_name : string
+        Name of the item to be searched in Buyma
+
+    Returns
+    -------
+    Dictionary containing found items.
+    '''
+    
+    # Format the item name into a Buyma search URL string
+    item_name_formatted = item_name.replace(' ','%20')
+    url = 'https://www.buyma.com/r/-F1/{}'.format(item_name_formatted)
+    
+    response = scrapy.Selector(text=requests.get(url, timeout=10).text)
+    
+    item_blocks = response.xpath('//div[@id="n_ResultList"]/ul/li')
+    
+    # Item info
+    prices = response.xpath('//div[@id="n_ResultList"]/ul/li/div[1]/div[1]/a/@price').extract()
+    item_ids = response.xpath('//div[@id="n_ResultList"]/ul/li/div[1]/div[1]/a[1]/@item-id').extract()
+
+    brand_names = response.xpath('//div[@id="n_ResultList"]/ul/li/div/div/a/@brand_name').extract()
+
+    item_names = response.xpath('//div[@id="n_ResultList"]/ul/li//img/@alt').extract()
+    item_names_clean = [item_name_cleaner(i) for i in item_names]
+    images = response.xpath('//div[@id="n_ResultList"]/ul/li//img/@src').extract()
+    
+    # Buyer info
+    buyer_names =  response.xpath('..//div[@class="product_Buyer"]/a/text()').extract()
+    buyer_url_slugs =  response.xpath('..//div[@class="product_Buyer"]/a/@href').extract()
+    buyer_ids = [b.split('/')[-1].split('.')[0] for b in buyer_url_slugs]
+    
+    items_dict = []
+    keys = ['price', 'item_id', 'brand', 'item_name', 'item_name_clean', 'image', 'buyer_name', 'buyer_id']
+    # Combine to a dictionary
+    items_dict+= [dict(zip(keys,[prices[i],
+                      item_ids[i],
+                      brand_names[i],
+                      item_names[i],
+                      item_names_clean[i],
+                      images[i],
+                      buyer_names[i],
+                      buyer_ids[i]])) 
+                  for i in range(len(prices))]
+
+    return items_dict
+
 
 #buyer_page_data = seller_list('https://www.buyma.com/buyer/4880785/sales_1.html', 60)
 
