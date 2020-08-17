@@ -28,22 +28,72 @@
     </head>
     <body>
         <div class="container">
+          <h1>
+            Buyma Spy
+          </h1>
+      </div>
+
+
+        <div class="container">
             <h3>
-              Buyma Spy
+              Buyer's Items List - Base Details
             </h3>
+              This tool gets the base data for items listed on a buyer's page.<br>
+              The maximum number of previous days it will search is 100 days.<br> 
+                 <br>
+              <br>
         </div>
 
             <!-- Form -->
     <div class="container">
-        <form action="/scrape" method="POST">
+        <form action="/scrape_basic" method="POST">
+          <label for="Buyer Page URL">Buyer Page URL</label>
+          <input
+            type="text"
+            placeholder="Enter a buyer's items page URL (example: https://www.buyma.com/buyer/6973146/sales_1.html)"
+            class="u-full-width"
+            name="buyer_page_url_basic"
+          />
+  
+          <label for="Previous Days">Previous Days</label>
+          <input
+            type="text"
+            placeholder="Enter a number between 1 and 100"
+            class="u-full-width"
+            name="previous_days"
+          />
+  
+          <input type="submit" value="Download Results CSV File" id="get_results_btn" />
+          <br />
+          <div class="alert">
+            {{ scrape_results_basic }}
+          </div>
+        </form>
+      </div>
+
+      <div class="container">
+        <h3>
+          Buyer's Items List - All Details
+        </h3>
+          This tool gets the base data + additional data for items listed on a buyer's page.<br>
+          The maximum number of previous days it will search is 100 days.<br>
+          <b>NOTE: This may take a few minutes to gather all of the data if the user has a lot of items so please be patient and 
+          don't click twice.</b>
+               <br>
+          <br>
+    </div>
+
+        <!-- Form -->
+    <div class="container">
+        <form action="/scrape_all" method="POST">
           <label for="Buyer Page URL">Buyer Page URL</label>
           <input
             type="text"
             placeholder="Buyer Page URL"
             class="u-full-width"
-            name="buyer_page_url"
+            name="buyer_page_url_all"
           />
-  
+
           <label for="Previous Days">Previous Days</label>
           <input
             type="text"
@@ -51,14 +101,15 @@
             class="u-full-width"
             name="previous_days"
           />
-  
+
           <input type="submit" value="Download Results" id="get_results_btn" />
           <br />
           <div class="alert">
-            {{ scrape_results }}
+            {{ scrape_results_all }}
           </div>
         </form>
       </div>
+
 
 
     </body>

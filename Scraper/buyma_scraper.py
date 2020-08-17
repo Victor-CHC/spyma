@@ -1,6 +1,7 @@
 import json
 from datetime import date, timedelta, datetime
 import pandas as pd
+import time
 
 import scrapy
 import requests
@@ -70,7 +71,9 @@ def seller_list(buyer_page_url, previous_days):
     INPUT: Buyer page url, number of days from today to previously check
     OUTPUT: List of JSON data 
     '''
-    
+    if previous_days > 100:
+        previous_days = 100
+
     items_dict = []
     dt_threshold = datetime.today() - timedelta(previous_days)
     page_number=1
@@ -145,6 +148,7 @@ def all_listed_items_details(buyer_page_url, previous_days):
     buyer_page_data = seller_list(buyer_page_url, previous_days)
 
     items = []
+    counter = 0
     for i in buyer_page_data:
         item_url = 'https://www.buyma.com{}'.format(i.get('url_ext'))
         try:
@@ -153,7 +157,13 @@ def all_listed_items_details(buyer_page_url, previous_days):
             item_data = {'ERROR':'PAGE UNAVAILABLE'}
         all_item_data = {**i, **item_data}
         items.append(all_item_data)
-    
+
+        # Try not to spam the network too much
+        counter += 1
+        if counter == 10:
+            time.sleep(5)
+            counter = 0
+
     return items
 
 
