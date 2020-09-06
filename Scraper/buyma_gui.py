@@ -20,8 +20,23 @@ def sellerListClick():
     if seller_list_results:
         directory = filedialog.asksaveasfilename()
         pd.DataFrame(seller_list_results).to_excel(directory+'.xlsx', index=False)
+
         
-        
+def sellerListExtraClick():
+    input1 = seller_list_url.get()
+    input2 = seller_list_prev_days.get()
+    try:
+        seller_list_results = buyma_scraper.all_listed_items_details(input1, int(input2))
+    except:
+        messagebox.showerror("Error", "Unable to get results. Invalid URL or Number.")
+        seller_list_results = None
+    
+    root.config(cursor="")
+    
+    if seller_list_results:
+        directory = filedialog.asksaveasfilename()
+        pd.DataFrame(seller_list_results).to_excel(directory+'.xlsx', index=False)        
+
         
 def itemMatchListClick():
     input1 = fuzzy_item_query.get()
@@ -58,7 +73,20 @@ seller_list_prev_days.insert(0, '1')
 sellerListButton = Button(root, text="Generate Item List", command=sellerListClick)
 sellerListButton.pack()
 
+# Seller List Extra
+buyma_user_extra_label = Label(root, text="Get Buyma User's Items List With Additional Details")
+buyma_user_extra_label.pack()
 
+seller_list_extra_url = Entry(root, width=50)
+seller_list_extra_url.pack()
+seller_list_extra_url.insert(0, 'https://www.buyma.com/buyer/4880785/sales_1.html')
+
+seller_list_extra_prev_days = Entry(root, width=50)
+seller_list_extra_prev_days.pack()
+seller_list_extra_prev_days.insert(0, '1')
+
+sellerListExtraButton = Button(root, text="Generate Item List", command=sellerListExtraClick)
+sellerListExtraButton.pack()
 
 # Item Matching
 item_matching_label = Label(root, text="Get Similar Items List")
