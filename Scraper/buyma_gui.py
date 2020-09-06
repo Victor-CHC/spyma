@@ -11,6 +11,8 @@ def sellerListClick():
     input2 = seller_list_prev_days.get()
     try:
         seller_list_results = buyma_scraper.seller_list(input1, int(input2))
+        if len(seller_list_results) == 0:
+            messagebox.showerror("Error","No items found. Try a different URL.")
     except:
         messagebox.showerror("Error", "Unable to get results. Invalid URL or Number.")
         seller_list_results = None
@@ -27,6 +29,8 @@ def sellerListExtraClick():
     input2 = seller_list_prev_days.get()
     try:
         seller_list_results = buyma_scraper.all_listed_items_details(input1, int(input2))
+        if len(seller_list_results) == 0:
+            messagebox.showerror("Error","No items found. Try a different URL.")
     except:
         messagebox.showerror("Error", "Unable to get results. Invalid URL or Number.")
         seller_list_results = None
