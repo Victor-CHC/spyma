@@ -1,5 +1,6 @@
 #from buyma_scraper import seller_list
 
+import tkinter
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
@@ -7,8 +8,6 @@ import buyma_scraper
 import pandas as pd
 
 LARGE_FONT = ("Verdana", 12)
-
-
 
 
 class BuymaSpyApp(tk.Tk):
@@ -43,6 +42,24 @@ class BuymaSpyApp(tk.Tk):
         frame = self.frames[cont]
         # Bring frame to the front
         frame.tkraise()
+        
+    def sellerListClick(self):
+        input1 = self.seller_list_url.get()
+        input2 = self.seller_list_prev_days.get()
+        try:
+            seller_list_results = buyma_scraper.seller_list(input1, int(input2))
+            if len(seller_list_results) == 0:
+                tk.messagebox.showerror("Error","No items found. Try a different URL.")
+        except:
+            tk.messagebox.showerror("Error", "Unable to get results. Invalid URL or Number.")
+            seller_list_results = None
+        
+        #tk.Tk().config(cursor="")
+        
+        if seller_list_results:
+            directory = filedialog.asksaveasfilename()
+            pd.DataFrame(seller_list_results).to_excel(directory+'.xlsx', index=False)
+        
 
 
 class StartPage(tk.Frame):
@@ -109,27 +126,11 @@ class PageOne(tk.Frame):
         self.seller_list_prev_days.grid(row=3, column=1)
         self.seller_list_prev_days.insert(0, '1')
         
-    #     sellerListButton = ttk.Button(self, text="Generate Item List", 
-    #                                   command=PageOne.sellerListClick(self))
-    #     sellerListButton.grid(row=4, column=1)
+        sellerListButton = ttk.Button(self, text="Generate Item List", 
+                                      command=BuymaSpyApp.sellerListClick)
+        sellerListButton.grid(row=4, column=1)
     
-    # def sellerListClick(self):
-    #     input1 = self.seller_list_url.get()
-    #     input2 = self.seller_list_prev_days.get()
-    #     try:
-    #         seller_list_results = buyma_scraper.seller_list(input1, int(input2))
-    #         if len(seller_list_results) == 0:
-    #             tk.messagebox.showerror("Error","No items found. Try a different URL.")
-    #     except:
-    #         tk.messagebox.showerror("Error", "Unable to get results. Invalid URL or Number.")
-    #         seller_list_results = None
-        
-    #     tk.Tk().config(cursor="")
-        
-    #     if seller_list_results:
-    #         directory = filedialog.asksaveasfilename()
-    #         pd.DataFrame(seller_list_results).to_excel(directory+'.xlsx', index=False)
-        
+
         
 
 class PageTwo(tk.Frame):
