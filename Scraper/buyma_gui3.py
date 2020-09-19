@@ -70,6 +70,7 @@ def importFileClick():
     filename_label = Label(matching_user_item_frame, text=filename)    
     filename_label.grid(row=4, column=0, padx=20, sticky='w')
     filename_label['bg'] = 'white'
+    filename_label['fg'] = '#4A42B4'
 
 
 
@@ -91,13 +92,19 @@ def fileMatchListClick():
 
 
 root = Tk()
+
+# --- App Base Details ---
 root['bg'] = 'white'
 root.title('Buyma Spy')
+root.iconbitmap("images/icon_purple.ico")
+
 
 buyma_title_img = PhotoImage(file='images/logo_purple.png')
 buyma_title_label = Label(image=buyma_title_img,
                        borderwidth=0)
 buyma_title_label.grid(row=0, column=0, pady=(10,20), padx=20, sticky='w')
+
+
 
 # --- Seller List ---
 user_item_frame = LabelFrame(root, text="Sold Items List")
@@ -160,6 +167,7 @@ sellerListButton = Button(user_item_frame, text="Download Item List",
                           command=sellerListClick)
 sellerListButton['bg'] = 'white'
 sellerListButton['activebackground'] = '#E72B75'
+sellerListButton['activeforeground'] = 'white'
 sellerListButton.grid(row=10, column=0, pady=30, padx=20, sticky='w')
 
 
@@ -204,6 +212,7 @@ itemMatchListButton = Button(item_matching_frame, text="Download Item List",
                           command=itemMatchListClick)
 itemMatchListButton['bg'] = 'white'
 itemMatchListButton['activebackground'] = '#2AC389'
+itemMatchListButton['activeforeground'] = 'white'
 itemMatchListButton.grid(row=10, column=0, pady=30, padx=20, sticky='w')
 
 
@@ -225,13 +234,14 @@ open_file_btn = Button(matching_user_item_frame, text="Open File",
                        command=importFileClick)
 open_file_btn['bg'] = 'white'
 open_file_btn['activebackground'] = '#4A42B4'
-open_file_btn.grid(row=3, column=0, pady=(0,20), padx=20, sticky='w')
+open_file_btn['activeforeground'] = 'white'
+open_file_btn.grid(row=3, column=0, pady=(0,0), padx=20, sticky='w')
 
 excel_threshold_slider_title = Label(matching_user_item_frame, text="WORD MATCH THRESHOLD")
 excel_threshold_slider_title['bg'] = 'white'
 excel_threshold_slider_title['fg'] = '#4A42B4'
 excel_threshold_slider_title.config(font=("Calibri", 12, 'bold'))
-excel_threshold_slider_title.grid(row=5, column=0, pady=0, padx=20, sticky='w')
+excel_threshold_slider_title.grid(row=5, column=0, pady=(20,0), padx=20, sticky='w')
 
 excel_threshold_slider = Scale(matching_user_item_frame, from_=0, to=100,
                                      tickinterval=20, length=300, orient=HORIZONTAL)
@@ -245,6 +255,8 @@ fileMatchListButton = Button(matching_user_item_frame, text="Download Item List"
                           command=fileMatchListClick)
 fileMatchListButton['bg'] = 'white'
 fileMatchListButton['activebackground'] = '#4A42B4'
+fileMatchListButton['activeforeground'] = 'white'
+
 
 fileMatchListButton.grid(row=7, column=0, pady=30, padx=20, sticky='w')
 
