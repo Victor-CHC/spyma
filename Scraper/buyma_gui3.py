@@ -65,6 +65,12 @@ def importFileClick():
     df = pd.read_excel(filename)
     df_dict = df.T.to_dict()
     import_list = list(df_dict.values())
+    
+    # Print the file name
+    filename_label = Label(matching_user_item_frame, text=filename)    
+    filename_label.grid(row=4, column=0, padx=20, sticky='w')
+    filename_label['bg'] = 'white'
+
 
 
 def fileMatchListClick():
@@ -80,26 +86,29 @@ def fileMatchListClick():
     
     if results:
         directory = filedialog.asksaveasfilename()
-        pd.DataFrame(results).to_excel(directory+'.xlsx', index=False)        
-
-    
-
+        pd.DataFrame(results).to_excel(directory+'.xlsx', index=False)
+        
 
 
 root = Tk()
-buyma_title_label = Label(root, text="Buyma Spy")
-buyma_title_label.grid(row=0, column=0, pady=10, padx=20, sticky='w')
+root['bg'] = 'white'
+root.title('Buyma Spy')
 
-
+buyma_title_img = PhotoImage(file='images/logo_purple.png')
+buyma_title_label = Label(image=buyma_title_img,
+                       borderwidth=0)
+buyma_title_label.grid(row=0, column=0, pady=(10,20), padx=20, sticky='w')
 
 # --- Seller List ---
 user_item_frame = LabelFrame(root, text="Sold Items List")
 user_item_frame['bg'] = 'white'
+user_item_frame['fg'] = '#E72B75'
 user_item_frame.config(font=("Calibri", 18))
 user_item_frame.grid(row=1, column=0, pady=10, padx=20, sticky='n')
 
 seller_list_URL_title = Label(user_item_frame, text="USER'S SALE PAGE URL:")
 seller_list_URL_title['bg'] = 'white'
+seller_list_URL_title['fg'] = '#E72B75'
 seller_list_URL_title.config(font=("Calibri", 12, 'bold'))
 seller_list_URL_title.grid(row=2, column=0, pady=(20,0), padx=20, sticky='w')
 
@@ -112,6 +121,7 @@ seller_list_url.insert(0, 'https://www.buyma.com/buyer/4880785/sales_1.html')
 
 seller_list_prev_days_title = Label(user_item_frame, text="PREVIOUS DAYS:")
 seller_list_prev_days_title['bg'] = 'white'
+seller_list_prev_days_title['fg'] = '#E72B75'
 seller_list_prev_days_title.config(font=("Calibri", 12, 'bold'))
 seller_list_prev_days_title.grid(row=4, column=0, pady=0, padx=20, sticky='w')
 
@@ -119,22 +129,29 @@ seller_list_prev_days_slider = Scale(user_item_frame, from_=0, to=100,
                                      tickinterval=20, length=300, orient=HORIZONTAL)
 seller_list_prev_days_slider.set(30)
 seller_list_prev_days_slider['bg'] = 'white'
+seller_list_prev_days_slider['activebackground'] = '#E72B75'
 seller_list_prev_days_slider.grid(row=5, column=0, pady=(0,20), padx=20, sticky='w')
 
 details_toggle = IntVar()
 seller_list_details_button = Checkbutton(user_item_frame, text="FULL DETAILS",
                                          variable=details_toggle, anchor='w')
 seller_list_details_button['bg'] = 'white'
+seller_list_details_button['fg'] = '#E72B75'
 seller_list_details_button.config(font=("Calibri", 12, 'bold'))
 seller_list_details_button.grid(row=6,  pady=5, padx=5, sticky='w')
 
 seller_list_details_caution1 = Label(user_item_frame, 
                                      text="CAUTION: Getting full details may take several minutes.")
+seller_list_details_caution1.config(font=("Calibri", 11, 'italic'))
+
 seller_list_details_caution2 = Label(user_item_frame, 
                                      text="Be patient and wait for the process to finish.")
+seller_list_details_caution2.config(font=("Calibri", 11, 'italic'))
 
 seller_list_details_caution1['bg'] = 'white'
+seller_list_details_caution1['fg'] = 'black'
 seller_list_details_caution2['bg'] = 'white'
+seller_list_details_caution2['fg'] = 'black'
 seller_list_details_caution1.grid(row=7, column=0, pady=0, padx=20, sticky='w')
 seller_list_details_caution2.grid(row=8, column=0, pady=0, padx=20, sticky='w')
 
@@ -142,6 +159,7 @@ seller_list_details_caution2.grid(row=8, column=0, pady=0, padx=20, sticky='w')
 sellerListButton = Button(user_item_frame, text="Download Item List", 
                           command=sellerListClick)
 sellerListButton['bg'] = 'white'
+sellerListButton['activebackground'] = '#E72B75'
 sellerListButton.grid(row=10, column=0, pady=30, padx=20, sticky='w')
 
 
@@ -151,11 +169,13 @@ sellerListButton.grid(row=10, column=0, pady=30, padx=20, sticky='w')
 
 item_matching_frame = LabelFrame(root, text="Matching Items Search")
 item_matching_frame['bg'] = 'white'
+item_matching_frame['fg'] = '#2AC389'
 item_matching_frame.config(font=("Calibri", 18))
 item_matching_frame.grid(row=1, column=1, pady=10, padx=20, sticky='n')
 
 fuzzy_item_queryL_title = Label(item_matching_frame, text="SEARCH WORDS:")
 fuzzy_item_queryL_title['bg'] = 'white'
+fuzzy_item_queryL_title['fg'] = '#2AC389'
 fuzzy_item_queryL_title.config(font=("Calibri", 12, 'bold'))
 fuzzy_item_queryL_title.grid(row=2, column=0, pady=(20,0), padx=20, sticky='w')
 
@@ -163,11 +183,12 @@ fuzzy_item_queryL_title.grid(row=2, column=0, pady=(20,0), padx=20, sticky='w')
 fuzzy_item_query = Entry(item_matching_frame, width=50)
 fuzzy_item_query.grid(row=3, column=0, pady=(0,20), padx=20, sticky='w')
 fuzzy_item_query['bg'] = 'white'
-fuzzy_item_query.insert(0, 'Dior トップス Tシャツ')
+fuzzy_item_query.insert(0, 'Air Jordan')
 
 
 fuzzy_threshold_slider_title = Label(item_matching_frame, text="WORD MATCH THRESHOLD")
 fuzzy_threshold_slider_title['bg'] = 'white'
+fuzzy_threshold_slider_title['fg'] = '#2AC389'
 fuzzy_threshold_slider_title.config(font=("Calibri", 12, 'bold'))
 fuzzy_threshold_slider_title.grid(row=4, column=0, pady=0, padx=20, sticky='w')
 
@@ -175,48 +196,57 @@ fuzzy_threshold_slider = Scale(item_matching_frame, from_=0, to=100,
                                      tickinterval=20, length=300, orient=HORIZONTAL)
 fuzzy_threshold_slider.set(90)
 fuzzy_threshold_slider['bg'] = 'white'
+fuzzy_threshold_slider['activebackground'] = '#2AC389'
 fuzzy_threshold_slider.grid(row=5, column=0, pady=(0,20), padx=20, sticky='w')
 
 
 itemMatchListButton = Button(item_matching_frame, text="Download Item List", 
                           command=itemMatchListClick)
 itemMatchListButton['bg'] = 'white'
+itemMatchListButton['activebackground'] = '#2AC389'
 itemMatchListButton.grid(row=10, column=0, pady=30, padx=20, sticky='w')
 
 
 # --- Item Matching From List---
 matching_user_item_frame = LabelFrame(root, text="Matching Items From File")
 matching_user_item_frame['bg'] = 'white'
+matching_user_item_frame['fg'] = '#4A42B4'
 matching_user_item_frame.config(font=("Calibri", 18))
 matching_user_item_frame.grid(row=1, column=2, pady=10, padx=20, sticky='n')
 
 
 import_excel_title = Label(matching_user_item_frame, text="IMPORT EXCEL FILE:")
 import_excel_title['bg'] = 'white'
+import_excel_title['fg'] = '#4A42B4'
 import_excel_title.config(font=("Calibri", 12, 'bold'))
 import_excel_title.grid(row=2, column=0, pady=(20,0), padx=20, sticky='w')
 
 open_file_btn = Button(matching_user_item_frame, text="Open File", 
                        command=importFileClick)
 open_file_btn['bg'] = 'white'
+open_file_btn['activebackground'] = '#4A42B4'
 open_file_btn.grid(row=3, column=0, pady=(0,20), padx=20, sticky='w')
 
 excel_threshold_slider_title = Label(matching_user_item_frame, text="WORD MATCH THRESHOLD")
 excel_threshold_slider_title['bg'] = 'white'
+excel_threshold_slider_title['fg'] = '#4A42B4'
 excel_threshold_slider_title.config(font=("Calibri", 12, 'bold'))
-excel_threshold_slider_title.grid(row=4, column=0, pady=0, padx=20, sticky='w')
+excel_threshold_slider_title.grid(row=5, column=0, pady=0, padx=20, sticky='w')
 
 excel_threshold_slider = Scale(matching_user_item_frame, from_=0, to=100,
                                      tickinterval=20, length=300, orient=HORIZONTAL)
 excel_threshold_slider.set(90)
 excel_threshold_slider['bg'] = 'white'
-excel_threshold_slider.grid(row=5, column=0, pady=(0,20), padx=20, sticky='w')
+excel_threshold_slider['activebackground'] = '#4A42B4'
+excel_threshold_slider.grid(row=6, column=0, pady=(0,20), padx=20, sticky='w')
 
 
-fileMatchListButton = Button(matching_user_item_frame, text="Download Matching Item List", 
+fileMatchListButton = Button(matching_user_item_frame, text="Download Item List", 
                           command=fileMatchListClick)
 fileMatchListButton['bg'] = 'white'
-fileMatchListButton.grid(row=6, column=0, pady=30, padx=20, sticky='w')
+fileMatchListButton['activebackground'] = '#4A42B4'
+
+fileMatchListButton.grid(row=7, column=0, pady=30, padx=20, sticky='w')
 
 
 root.mainloop()
