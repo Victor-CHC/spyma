@@ -75,12 +75,11 @@ def importFileClick():
 
 
 def fileMatchListClick():
-    input1 = excel_item_query.get()
-    input2 = import_list
-    input3 = excel_threshold_slider.get()
+    
+    threshold = excel_threshold_slider.get()
     
     try:
-        results = buyma_scraper.similar_items(import_list, 90)
+        results = buyma_scraper.similar_items(import_list, threshold)
     except:
         results = None
         messagebox.showerror("Error", "Invalid File")

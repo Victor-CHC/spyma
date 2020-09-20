@@ -154,7 +154,43 @@ def all_listed_items_details(buyer_page_url, previous_days):
         try:
             item_data = item_json(item_url)
         except:
-            item_data = {'ERROR':'PAGE UNAVAILABLE'}
+            #item_data = {'ERROR':'PAGE UNAVAILABLE'}
+            item_data ={
+            'url':'PAGE UNAVAILABLE', 
+            'access_count':'PAGE UNAVAILABLE', 
+            'fav_count':'PAGE UNAVAILABLE', 
+            'syo_id':'PAGE UNAVAILABLE', 
+            'syo_name':'PAGE UNAVAILABLE', 
+            'syo_img1':'PAGE UNAVAILABLE', 
+            'syo_img_090_1':'PAGE UNAVAILABLE', 
+            'syo_img_210_1':'PAGE UNAVAILABLE', 
+            'syo_url':'PAGE UNAVAILABLE', 
+            'tanka_format':'PAGE UNAVAILABLE', 
+            'discount_percentage':'PAGE UNAVAILABLE', 
+            'on_timesale':'PAGE UNAVAILABLE', 
+            'brand_name_eigo':'PAGE UNAVAILABLE', 
+            'brand_url':'PAGE UNAVAILABLE', 
+            'category_id':'PAGE UNAVAILABLE', 
+            'category':'PAGE UNAVAILABLE', 
+            'buyer_id':'PAGE UNAVAILABLE', 
+            'brand_id':'PAGE UNAVAILABLE', 
+            'model_id':'PAGE UNAVAILABLE', 
+            'season_id':'PAGE UNAVAILABLE', 
+            'thm_id':'PAGE UNAVAILABLE', 
+            'kokaidate':'PAGE UNAVAILABLE', 
+            'yukodate':'PAGE UNAVAILABLE', 
+            'cate_id1':'PAGE UNAVAILABLE', 
+            'cate_id2':'PAGE UNAVAILABLE', 
+            'cate_id3':'PAGE UNAVAILABLE', 
+            'tag_ids':'PAGE UNAVAILABLE', 
+            'reference_price_kbn':'PAGE UNAVAILABLE', 
+            'reference_price':'PAGE UNAVAILABLE', 
+            'timesale_start_date':'PAGE UNAVAILABLE', 
+            'timesale_end_date':'PAGE UNAVAILABLE', 
+            'item_id':'PAGE UNAVAILABLE', 
+            'price':'PAGE UNAVAILABLE', 
+            'coupon':'PAGE UNAVAILABLE'}
+            
         all_item_data = {**i, **item_data}
         items.append(all_item_data)
 
