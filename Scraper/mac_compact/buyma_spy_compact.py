@@ -156,7 +156,7 @@ class SILPage(tk.Frame):
                             command=lambda: controller.show_frame("SILPage"),
                             highlightbackground='#E72B75')
         button1['bg'] = 'white'
-        button1['fg'] = '#E72B75'
+        button1['fg'] = 'black'
         
         button2 = tk.Button(buttonFrame, text="Matching Items Search",
                             command=lambda: controller.show_frame("MISPage"))
@@ -284,7 +284,7 @@ class MISPage(tk.Frame):
         button2 = tk.Button(buttonFrame, text="Matching Items Search",
                             command=lambda: controller.show_frame("MISPage"),
                             highlightbackground='#2AC389')
-        button2['fg'] = '#2AC389'
+        button2['fg'] = 'black'
         
         button3 = tk.Button(buttonFrame, text="Matching Items From File",
                             command=lambda: controller.show_frame("MIFFPage"))    
@@ -404,7 +404,7 @@ class MIFFPage(tk.Frame):
                             command=lambda: controller.show_frame("MIFFPage"),
                             highlightbackground='#4A42B4')    
         button3['bg'] = 'white'
-        button3['fg'] = '#4A42B4'
+        button3['fg'] = 'black'
         
         button1.pack(side="left")
         button2.pack(side="left")
