@@ -87,6 +87,7 @@ def seller_list(buyer_page_url, previous_days):
 
             # Get item urls
             item_url_extensions = buyer_table.xpath('..//li[@class="buyeritemtable_img"]/a/@href').extract()
+            item_urls = ['https://www.buyma.com{}'.format(i) for i in item_url_extensions]
             # Get item_images
             item_images = buyer_table.xpath('..//img/@src').extract()
             # Get item_names
@@ -103,10 +104,10 @@ def seller_list(buyer_page_url, previous_days):
                                       for i in range(len(item_names))]
             sold_dates = [datetime.strptime(i.split('：')[1], '%Y/%m/%d')  for i in sold_dates_unformatted]
 
-            keys = ['url_ext', 'img', 'item_name','item_name_clean','sold_amount', 'sold_date']
+            keys = ['item_url', 'img', 'item_name','item_name_clean','sold_amount', 'sold_date']
 
             # Combine to a dictionary
-            items_dict+= [dict(zip(keys,[item_url_extensions[i],
+            items_dict+= [dict(zip(keys,[item_urls[i],
                               item_images[i],
                               item_names[i],
                               item_names_cleaned[i],
@@ -150,7 +151,7 @@ def all_listed_items_details(buyer_page_url, previous_days):
     items = []
     counter = 0
     for i in buyer_page_data:
-        item_url = 'https://www.buyma.com{}'.format(i.get('url_ext'))
+        item_url = i.get('item_url')
         try:
             item_data = item_json(item_url)
         except:
@@ -310,7 +311,8 @@ def extra_search(search_item_name):
     # Item info
     prices = response.xpath('//div[@id="n_ResultList"]/ul/li/div[1]/div[1]/a/@price').extract()
     item_ids = response.xpath('//div[@id="n_ResultList"]/ul/li/div[1]/div[1]/a[1]/@item-id').extract()
-
+    item_urls = ['https://www.buyma.com/item/{}/'.format(i) for i in item_ids]
+    
     brand_names = response.xpath('//div[@id="n_ResultList"]/ul/li/div/div/a/@brand_name').extract()
 
     item_names = response.xpath('//div[@id="n_ResultList"]/ul/li//img/@alt').extract()
@@ -323,9 +325,11 @@ def extra_search(search_item_name):
     buyer_ids = [b.split('/')[-1].split('.')[0] for b in buyer_url_slugs]
     
     items_dict = []
-    keys = ['price', 'item_id', 'brand', 'item_name', 'item_name_clean', 'image', 'buyer_name', 'buyer_id']
+    keys = ['item_url', 'price', 'item_id', 'brand', 'item_name', 'item_name_clean', 'image', 'buyer_name', 'buyer_id']
     # Combine to a dictionary
-    items_dict+= [dict(zip(keys,[prices[i],
+    items_dict+= [dict(zip(keys,[
+                      item_urls[i],
+                      prices[i],
                       item_ids[i],
                       brand_names[i],
                       item_names[i],

@@ -17,7 +17,7 @@ def dict_list_to_excel(data, filename, extra=False, match=False):
     if len(data) != 0:
         
         if match==False:
-            column_names = ['url_ext', 'img', 'item_name', 'item_name_clean', 
+            column_names = ['item_url', 'img', 'item_name', 'item_name_clean', 
                             'sold_amount', 'sold_date']
             column_letters = ['A','B','C','D','E','F']
         else:
